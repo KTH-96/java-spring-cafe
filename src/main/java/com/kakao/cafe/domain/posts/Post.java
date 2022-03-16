@@ -9,6 +9,9 @@ public class Post {
     private String contents;
     private LocalDateTime localDateTime;
 
+    public Post() {
+    }
+
     public Post(Long id, String writer, String title, String contents, LocalDateTime localDateTime) {
         this.id = id;
         this.writer = writer;
@@ -43,5 +46,11 @@ public class Post {
 
     public void setLocalDateTime(LocalDateTime localDateTime) {
         this.localDateTime = localDateTime;
+    }
+
+    public void writePost(String writer, String title, String content) {
+        this.writer = writer;
+        this.title = title;
+        this.contents = content;
     }
 }
