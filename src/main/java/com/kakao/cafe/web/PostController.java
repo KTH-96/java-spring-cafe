@@ -41,6 +41,7 @@ public class PostController {
         }
         Post post = new Post();
         post.writePost(user.getUserId(), dto.getTitle(), dto.getContents());
+
         postsService.qnaRegister(post);
         return "redirect:/";
     }
