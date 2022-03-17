@@ -53,4 +53,9 @@ public class Post {
         this.title = title;
         this.contents = content;
     }
+
+    public void updateContent(String title, String content) {
+        this.title = title;
+        this.contents = content;
+    }
 }

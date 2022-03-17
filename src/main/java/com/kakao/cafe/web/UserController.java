@@ -65,7 +65,7 @@ public class UserController {
         User loginUser = (User) session.getAttribute(SESSION_USER);
         model.addAttribute("user", userService.findById(loginUser.getId()));
         return "user/updateForm";
-        }
+    }
 
     @PutMapping("/{id}/form")
     public String update(@PathVariable Long id, UserUpdateDto userUpdateDto, HttpServletRequest request) {
