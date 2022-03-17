@@ -26,7 +26,18 @@ public class PostsService {
         return postRepository.findAll();
     }
 
+    public Post findWriter(String writer) {
+        return postRepository.findByWriter(writer);
+    }
     public Post findPost(Long id) {
         return postRepository.findById(id);
+    }
+
+    public void update(String writer, Post post) {
+        postRepository.updatePost(writer, post);
+    }
+
+    public void delete(String writer) {
+        postRepository.deletePost(writer);
     }
 }

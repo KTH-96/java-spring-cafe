@@ -1,6 +1,5 @@
 package com.kakao.cafe.domain.posts;
 
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -29,7 +28,20 @@ public class JdbcPostRepository {
     public Post findById(Long id) {
         Post post = null;
         try {
-            post = jdbcTemplate.query("select * from post where id = ?", postRowMapper(), id)
+            post = jdbcTemplate.query("select id, writer, title, content, localdatetime from post where id = ?", postRowMapper(), id)
+                    .stream()
+                    .findAny()
+                    .orElseThrow(SQLException::new);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return post;
+    }
+
+    public Post findByWriter(String writer) {
+        Post post = null;
+        try {
+            post = jdbcTemplate.query("select id, writer, title, content, localdatetime from post where writer = ?", postRowMapper(), writer)
                     .stream()
                     .findAny()
                     .orElseThrow(SQLException::new);
@@ -40,7 +52,17 @@ public class JdbcPostRepository {
     }
 
     public List<Post> findAll() {
-        return jdbcTemplate.query("select * from post", postRowMapper());
+        return jdbcTemplate.query("select id, writer, title, content, localdatetime from post", postRowMapper());
+    }
+
+    public void updatePost(String writer, Post post) {
+        final String sql = "update post set content = ? where writer = ?";
+        jdbcTemplate.update(sql, post.getContents(), writer);
+    }
+
+    public void deletePost(String writer) {
+        final String sql = "delete from post where writer = ?";
+        jdbcTemplate.update(sql, writer);
     }
 
     private RowMapper<Post> postRowMapper() {
