@@ -3,11 +3,11 @@ package com.kakao.cafe.web;
 import com.kakao.cafe.domain.posts.Post;
 import com.kakao.cafe.domain.user.User;
 import com.kakao.cafe.service.PostsService;
+import com.kakao.cafe.service.ReplyService;
 import com.kakao.cafe.web.dto.PostRegisterDto;
 import com.kakao.cafe.web.dto.PostUpdateDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +20,11 @@ public class PostController {
     private static final String SESSION_NAME = "sessionUser";
     private static Logger log = LoggerFactory.getLogger(PostController.class);
     private final PostsService postsService;
+    private final ReplyService replyService;
 
-    @Autowired
-    public PostController(PostsService postsService) {
+    public PostController(PostsService postsService, ReplyService replyService) {
         this.postsService = postsService;
+        this.replyService = replyService;
     }
 
     @GetMapping("/form")
@@ -50,6 +51,7 @@ public class PostController {
     public String showContent(@PathVariable Long id, Model model) {
         log.info("게시글 번호 = {} 로 게시글 상세확인하기~", id);
         model.addAttribute("post", postsService.findPost(id));
+        model.addAttribute("reply", replyService.findReply(id));
         return "qna/show";
     }
 
