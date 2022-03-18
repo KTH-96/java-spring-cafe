@@ -20,3 +20,13 @@ create table `user`
     email VARCHAR(100),
     primary key (id)
 );
+
+drop table if exists reply CASCADE;
+
+create table reply
+(
+    post_id bigint,
+    writer VARCHAR(50) NOT NULL,
+    contents VARCHAR(255) NOT NULL,
+    create_time TIMESTAMP,
+);
