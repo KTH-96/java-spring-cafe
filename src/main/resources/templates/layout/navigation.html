@@ -19,7 +19,7 @@
                 </form>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <span th:if="${session.loginUser ne null}" th:text="${session.loginUser.userId}"></span>
+                        <span th:if="${session.sessionUser ne null}" th:text="${session.sessionUser.userId}"></span>
                     </li>
                     <li>
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-bell"></i></a>
@@ -54,16 +54,16 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li class="active"><a href="../index.html">Posts</a></li>
                     <li><a href="../user/login.html"
-                           th:if="${session.loginUser eq null}"
+                           th:if="${session.sessionUser eq null}"
                            th:href="@{/user/login}" role="button">로그인</a></li>
                     <li><a href="#"
-                           th:if="${session.loginUser ne null}"
+                           th:if="${session.sessionUser ne null}"
                            th:href="@{/user/logout}"
                            role="button">로그아웃</a></li>
                     <li><a href="../user/form.html" th:href="@{/user/form}" role="button">회원가입</a></li>
                     <li><a href="#"
-                           th:if="${session.loginUser ne null}"
-                           th:href="@{/user/{id}/form(id=${session.loginUser.id})}"
+                           th:if="${session.sessionUser ne null}"
+                           th:href="@{/user/{id}/form(id=${session.sessionUser.id})}"
                            role="button">개인정보수정</a></li>
                 </ul>
             </div>

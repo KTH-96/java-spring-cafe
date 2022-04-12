@@ -12,13 +12,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/qna")
 public class PostController {
-    private static final String SESSION_USER = "loginUser";
+    private static final String SESSION_NAME = "sessionUser";
     private static Logger log = LoggerFactory.getLogger(PostController.class);
     private final PostsService postsService;
 
@@ -36,7 +35,7 @@ public class PostController {
     @PostMapping("/form")
     public String registration(PostRegisterDto dto, HttpSession session) {
         log.info("게시글 등록하기");
-        User user = (User) session.getAttribute(SESSION_USER);
+        User user = (User) session.getAttribute(SESSION_NAME);
         if (user == null) {
             return "redirect:/user/login";
         }
@@ -56,7 +55,7 @@ public class PostController {
     @GetMapping("/update_form")
     public String updateForm(Model model, HttpSession session) {
         log.info("수정 폼 입니다");
-        User user = (User) session.getAttribute(SESSION_USER);
+        User user = (User) session.getAttribute(SESSION_NAME);
         if (user == null) {
             return "redirect:/user/login";
         }
@@ -72,7 +71,7 @@ public class PostController {
     @PutMapping("/{writer}/update")
     public String update(@PathVariable String writer, PostUpdateDto dto, HttpSession session) {
         log.info("{}게시글 수정 하기", writer);
-        User user = (User) session.getAttribute(SESSION_USER);
+        User user = (User) session.getAttribute(SESSION_NAME);
         if (user == null) {
             return "redirect:/user/login";
         }
@@ -85,7 +84,7 @@ public class PostController {
     @DeleteMapping("/{writer}/delete")
     public String delete(@PathVariable String writer, HttpSession session) {
         log.info("{}게시글 삭제 하기", writer);
-        User user = (User) session.getAttribute(SESSION_USER);
+        User user = (User) session.getAttribute(SESSION_NAME);
         if (user == null || user.getUserId().equals(writer)) {
             log.info("세션시간이 만료되었거나 자신이 작성한 게시글이 아님");
             return "redirect:/user/login";

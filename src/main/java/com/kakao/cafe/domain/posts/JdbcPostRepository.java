@@ -11,7 +11,12 @@ import java.util.*;
 
 @Repository
 public class JdbcPostRepository {
-
+    private final static String INSERT_POST_SQL = "insert into post(writer, title, content, localdatetime ) values(?,?,?,?)";
+    private final static String FIND_ID_SQL = "select id, writer, title, content, localdatetime from post where id = ?";
+    private final static String FIND_WRITER_SQL = "select id, writer, title, content, localdatetime from post where writer = ?";
+    private final static String FIND_POST_ALL_SQL = "select id, writer, title, content, localdatetime from post";
+    private final static String UPDATE_POST_BY_WRITER_SQL = "update post set content = ? where writer = ?";
+    private final static String DELETE_POST_BY_WRITER_SQL = "delete from post where writer = ?";
     private final JdbcTemplate jdbcTemplate;
 
     public JdbcPostRepository(DataSource dataSource) {
@@ -19,16 +24,15 @@ public class JdbcPostRepository {
     }
 
     public void save(Post post) {
-        String sql = "insert into post(writer, title, content, localdatetime ) values(?,?,?,?)";
         post.setLocalDateTime(LocalDateTime.now());
 
-        jdbcTemplate.update(sql, post.getWriter(), post.getTitle(), post.getContents(), post.getLocalDateTime());;
+        jdbcTemplate.update(INSERT_POST_SQL, post.getWriter(), post.getTitle(), post.getContents(), post.getLocalDateTime());;
     }
 
     public Post findById(Long id) {
         Post post = null;
         try {
-            post = jdbcTemplate.query("select id, writer, title, content, localdatetime from post where id = ?", postRowMapper(), id)
+            post = jdbcTemplate.query(FIND_ID_SQL, postRowMapper(), id)
                     .stream()
                     .findAny()
                     .orElseThrow(SQLException::new);
@@ -41,7 +45,7 @@ public class JdbcPostRepository {
     public Post findByWriter(String writer) {
         Post post = null;
         try {
-            post = jdbcTemplate.query("select id, writer, title, content, localdatetime from post where writer = ?", postRowMapper(), writer)
+            post = jdbcTemplate.query(FIND_WRITER_SQL, postRowMapper(), writer)
                     .stream()
                     .findAny()
                     .orElseThrow(SQLException::new);
@@ -52,17 +56,15 @@ public class JdbcPostRepository {
     }
 
     public List<Post> findAll() {
-        return jdbcTemplate.query("select id, writer, title, content, localdatetime from post", postRowMapper());
+        return jdbcTemplate.query(FIND_POST_ALL_SQL, postRowMapper());
     }
 
     public void updatePost(String writer, Post post) {
-        final String sql = "update post set content = ? where writer = ?";
-        jdbcTemplate.update(sql, post.getContents(), writer);
+        jdbcTemplate.update(UPDATE_POST_BY_WRITER_SQL, post.getContents(), writer);
     }
 
     public void deletePost(String writer) {
-        final String sql = "delete from post where writer = ?";
-        jdbcTemplate.update(sql, writer);
+        jdbcTemplate.update(DELETE_POST_BY_WRITER_SQL, writer);
     }
 
     private RowMapper<Post> postRowMapper() {

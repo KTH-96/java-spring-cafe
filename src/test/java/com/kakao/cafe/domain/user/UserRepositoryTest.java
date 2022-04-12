@@ -42,7 +42,7 @@ class UserRepositoryTest {
         User user = new User("save", "save", "save", "save");
         repository.save(user);
         //when
-        User saveUser = repository.findByUserId("save");
+        User saveUser = repository.findByUserId("save").get();
         //then
         assertThat(saveUser.getId()).isEqualTo(4L);
         assertThat(saveUser.getUserId()).isEqualTo("save");
@@ -56,9 +56,9 @@ class UserRepositoryTest {
         //given
         log.info("test_data.sql 파일에 테스트 데이터 생성");
         //when
-        User userA = repository.findById(1L);
-        User userB = repository.findById(2L);
-        User userC = repository.findById(3L);
+        User userA = repository.findById(1L).get();
+        User userB = repository.findById(2L).get();
+        User userC = repository.findById(3L).get();
         //then
         assertThat(userA.getUserId()).isEqualTo("test1");
         assertThat(userB.getUserId()).isEqualTo("test2");
@@ -68,9 +68,9 @@ class UserRepositoryTest {
     @DisplayName("jdbc findByUserId")
     void findByUserId() {
         //when 실행
-        User userA = repository.findByUserId("test1");
-        User userB = repository.findByUserId("test2");
-        User userC = repository.findByUserId("test3");
+        User userA = repository.findByUserId("test1").get();
+        User userB = repository.findByUserId("test2").get();
+        User userC = repository.findByUserId("test3").get();
         //then 검증
         assertThat(userA.getName()).isEqualTo("name1");
         assertThat(userB.getName()).isEqualTo("name2");
@@ -88,12 +88,12 @@ class UserRepositoryTest {
     @DisplayName("jdbc update")
     void update() {
         //given 준비
-        User user = repository.findByUserId("test1");
+        User user = repository.findByUserId("test1").get();
         UserUpdateDto dto = new UserUpdateDto("updateName", "updateEmail");
         user.updateProfile(dto);
         //when 실행
         repository.updateUser(user.getId(), user);
-        User updateUser = repository.findByUserId("test1");
+        User updateUser = repository.findByUserId("test1").get();
         //then 검증
         assertThat(updateUser.getName()).isEqualTo("updateName");
     }

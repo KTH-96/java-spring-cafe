@@ -81,7 +81,7 @@ class UserControllerTest {
 
     @Test
     void profile() throws Exception {
-        given(service.findUser(user.getUserId())).willReturn(user);
+        given(service.findUser(user.getUserId()).get()).willReturn(user);
         //when
         ResultActions actions = mockMvc.perform(get("/user/" + user.getUserId()));
         //given

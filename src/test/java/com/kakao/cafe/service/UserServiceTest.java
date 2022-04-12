@@ -38,9 +38,10 @@ class UserServiceTest {
     void userJoin() {
         //given 준비
         UserJoinDto dto = new UserJoinDto("dto", "dto", "dto", "dto");
+
         //when 실행
-        userService.userJoin(dto);
-        User userDto = userRepository.findByUserId("dto");
+        userService.userJoin(new User(dto.getUserId(), dto.getPassword(), dto.getName(), dto.getEmail()));
+        User userDto = userRepository.findByUserId("dto").get();
         //then 검증
         assertThat(userDto.getName()).isEqualTo("dto");
 
@@ -50,8 +51,8 @@ class UserServiceTest {
     @DisplayName("회원 조회")
     void findUser() {
         //when 실행
-        User userA = userService.findUser("test1");
-        User userB = userService.findById(1L);
+        User userA = userService.findUser("test1").get();
+        User userB = userService.findById(1L).get();
         //then 검증
         assertThat(userA.getName()).isEqualTo("name1");
         assertThat(userB.getName()).isEqualTo("name1");
@@ -68,12 +69,12 @@ class UserServiceTest {
     @DisplayName("회원 업데이트")
     void update() {
         //given 준비
-        User user = userService.findById(1L);
+        User user = userService.findById(1L).get();
         UserUpdateDto dto = new UserUpdateDto("updateName", "updateEmail");
         user.updateProfile(dto);
         //when 실행
         userService.userUpdate(user.getId(), user);
-        User updateUser = userRepository.findByUserId("test1");
+        User updateUser = userRepository.findByUserId("test1").get();
         //then 검증
         assertThat(updateUser.getName()).isEqualTo("updateName");
     }

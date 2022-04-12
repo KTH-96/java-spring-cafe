@@ -12,14 +12,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.naming.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
-    private static final String SESSION_USER = "loginUser";
+    private static final String SESSION_NAME = "sessionUser";
     private static final Logger log = LoggerFactory.getLogger(IndexController.class);
     private final UserService userService;
 
@@ -37,7 +37,7 @@ public class UserController {
     @PostMapping("/form")
     public String join(UserJoinDto dto) {
         log.info("회원가입 하기");
-        userService.userJoin(dto);
+        userService.userJoin(new User(dto.getUserId(), dto.getPassword(), dto.getName(),dto.getEmail()));
         return "redirect:/";
     }
 
@@ -58,27 +58,33 @@ public class UserController {
     @GetMapping("/{id}/form")
     public String updateForm(@PathVariable Long id, Model model, HttpServletRequest request) {
         log.info("유저번호 = {} 로 회원정보 수정하기 폼", id);
+
         HttpSession session = request.getSession(false);
         if (session == null) {
-            model.addAttribute("user", userService.findById(id));
+            return "redirect:/user/login";
         }
-        User loginUser = (User) session.getAttribute(SESSION_USER);
-        model.addAttribute("user", userService.findById(loginUser.getId()));
+
+        Optional<User> user_optional = userService.findById(id);
+        if (user_optional.isEmpty()) {
+            return "redirect:/user/updateForm";
+        }
+
+        model.addAttribute("user", user_optional.get());
         return "user/updateForm";
     }
 
     @PutMapping("/{id}/form")
-    public String update(@PathVariable Long id, UserUpdateDto userUpdateDto, HttpServletRequest request) {
+    public String update(@PathVariable Long id, UserUpdateDto userUpdateDto) {
         log.info("유저번호 = {} 로 회원정보 수정하기", id);
-        HttpSession session = request.getSession(false);
-        User user = userService.findById(id);
-        user.updateProfile(userUpdateDto);
-        if (session == null) {
-            userService.userUpdate(id, user);
+
+        Optional<User> updateUser = userService.findById(id);
+        if (updateUser.isEmpty()) {
+            return "redirect:/user/updateForm";
         }
-        User loginUser = (User) session.getAttribute(SESSION_USER);
-        log.info("user email = {}", user.getEmail());
-        userService.userUpdate(loginUser.getId(), user);
+        User user = updateUser.get();
+        user.updateProfile(userUpdateDto);
+
+        userService.userUpdate(id, user);
         return "redirect:/user/list";
     }
 
@@ -91,13 +97,14 @@ public class UserController {
     @PostMapping("/login")
     public String login(LoginDto dto, HttpServletRequest request) {
         log.info("로그인 하기 userId = {}", dto.getUserId());
-        User user = userService.login(dto.getUserId(), dto.getPassword());
-        if (user == null) {
-            return "redirect:/user/login_failed";
-        }
-        HttpSession session = request.getSession();
-        session.setAttribute(SESSION_USER, user);
 
+        Optional<User> user = userService.login(dto.getUserId(), dto.getPassword());
+        if (user.isEmpty() || !user.get().passwordCheck(dto.getPassword())) {
+            return "user/login_failed";
+        }
+
+        HttpSession session = request.getSession();
+        session.setAttribute(SESSION_NAME, user.get());
         return "redirect:/";
     }
 

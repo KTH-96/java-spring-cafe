@@ -55,4 +55,11 @@ public class User {
         this.name = userUpdateDto.getName();
         this.email = userUpdateDto.getEmail();
     }
+
+    public boolean passwordCheck(String password) {
+        if (this.password.equals(password)) {
+            return true;
+        }
+        return false;
+    }
 }

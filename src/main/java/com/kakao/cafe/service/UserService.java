@@ -7,6 +7,7 @@ import com.kakao.cafe.web.dto.UserUpdateDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -17,12 +18,11 @@ public class UserService {
     }
 
 
-    public void userJoin(UserJoinDto dto) {
-        userRepository.save(new User(dto.getUserId(), dto.getPassword()
-                , dto.getName(), dto.getEmail()));
+    public void userJoin(User user) {
+        userRepository.save(user);
     }
 
-    public User findUser(String userId) {
+    public Optional<User> findUser(String userId) {
         return userRepository.findByUserId(userId);
     }
     public List<User> findUsers() {
@@ -33,15 +33,11 @@ public class UserService {
         userRepository.updateUser(id, user);
     }
 
-    public User findById(Long id) {
+    public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
 
-    public User login(String userId, String password) {
-        User loginUser = userRepository.findByLoginId(userId);
-        if (loginUser.getPassword().equals(password)) {
-            return loginUser;
-        }
-        return null;
+    public Optional<User> login(String userId, String password) {
+        return userRepository.findByUserId(userId);
     }
 }
