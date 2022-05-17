@@ -2,18 +2,16 @@ package com.kakao.cafe.service;
 
 import com.kakao.cafe.domain.user.JdbcUserRepository;
 import com.kakao.cafe.domain.user.User;
-import com.kakao.cafe.web.dto.UserJoinDto;
-import com.kakao.cafe.web.dto.UserUpdateDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class MemberService {
     private final JdbcUserRepository userRepository;
 
-    public UserService(JdbcUserRepository userRepository) {
+    public MemberService(JdbcUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
