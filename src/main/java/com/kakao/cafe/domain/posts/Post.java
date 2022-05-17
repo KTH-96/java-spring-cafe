@@ -1,61 +1,51 @@
 package com.kakao.cafe.domain.posts;
 
+import static javax.persistence.FetchType.*;
+
+import com.kakao.cafe.domain.BaseTimeEntity;
+import com.kakao.cafe.domain.member.Member;
+import com.kakao.cafe.domain.reply.Reply;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-public class Post {
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+public class Post extends BaseTimeEntity {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_id")
     private Long id;
+    @Column(length = 100, nullable = false)
     private String writer;
+    @Column(length = 500, nullable = false)
     private String title;
+    @Column(columnDefinition = "TEXT")
     private String contents;
-    private LocalDateTime localDateTime;
 
-    public Post() {
-    }
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
-    public Post(Long id, String writer, String title, String contents, LocalDateTime localDateTime) {
-        this.id = id;
+    @OneToMany(mappedBy = "post")
+    private List<Reply> replyList = new ArrayList<>();
+    @Builder
+    public Post(String writer, String title, String contents) {
         this.writer = writer;
         this.title = title;
         this.contents = contents;
-        this.localDateTime = localDateTime;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getWriter() {
-        return writer;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public LocalDateTime getLocalDateTime() {
-        return localDateTime;
-    }
-
-    public void setLocalDateTime(LocalDateTime localDateTime) {
-        this.localDateTime = localDateTime;
-    }
-
-    public void writePost(String writer, String title, String content) {
-        this.writer = writer;
-        this.title = title;
-        this.contents = content;
-    }
-
-    public void updateContent(String title, String content) {
-        this.title = title;
-        this.contents = content;
     }
 }
