@@ -1,41 +1,25 @@
 package com.kakao.cafe.service;
 
-import com.kakao.cafe.domain.user.JdbcUserRepository;
-import com.kakao.cafe.domain.user.User;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
+import com.kakao.cafe.domain.member.Member;
+import com.kakao.cafe.domain.member.MemberRepository;
+import com.kakao.cafe.web.dto.member.MemberJoinResponseDto;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 @Service
 public class MemberService {
-    private final JdbcUserRepository userRepository;
 
-    public MemberService(JdbcUserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+	private final MemberRepository memberRepository;
 
-
-    public void userJoin(User user) {
-        userRepository.save(user);
-    }
-
-    public Optional<User> findUser(String userId) {
-        return userRepository.findByUserId(userId);
-    }
-    public List<User> findUsers() {
-        return userRepository.findAll();
-    }
-
-    public void userUpdate(Long id, User user) {
-        userRepository.updateUser(id, user);
-    }
-
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
-    }
-
-    public Optional<User> login(String userId, String password) {
-        return userRepository.findByUserId(userId);
-    }
+	@Transactional
+	public MemberJoinResponseDto join(Member member) {
+		return Optional.ofNullable(new MemberJoinResponseDto(memberRepository.save(member)))
+			.orElseThrow(() -> new IllegalArgumentException("회원 가입 실패"));
+	}
 }

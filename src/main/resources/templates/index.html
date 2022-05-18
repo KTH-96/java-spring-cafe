@@ -1,73 +1,78 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-	<head th:replace="~{layout/header :: header_fragment}"></head>
+<html xmlns:th="http://www.thymeleaf.org" lang="kr">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>kakao Java Web Programming</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/reset.css" rel="stylesheet">
+<!--    &lt;!&ndash;[if lt IE 9]>-->
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<!--    <![endif]&ndash;&gt;-->
+    <link href="/css/index.css" rel="stylesheet">
+</head>
 <body>
-    <div th:insert="~{layout/navigation :: navigation_bar}"></div>
-<div class="container" id="main">
-   <div class="col-md-12 col-sm-12 col-lg-10 col-lg-offset-1">
-      <div class="panel panel-default qna-list">
-          <ul class="list">
-              <li th:each="posts : ${post}">
-                  <div class="wrap">
-                      <div class="main">
-                          <strong class="subject">
-                              <a href="./qna/show.html"
-                                 th:if="${session.loginUser ne null}"
-                                 th:href="@{/qna/{index}(index=${posts.id})}"
-                                 th:text="${posts.title}">
-                              </a>
-                              <p
-                                 th:if="${session.loginUser eq null}"
-                                 th:text="${posts.title}">
-                              </p>
-                          </strong>
-                          <div class="auth-info">
-                              <i class="icon-add-comment"></i>
-                              <span class="time"
-                                th:text="${#temporals.format(posts.localDateTime, 'yyyy-MM-dd HH:mm')}">
-                                  2016-01-15 18:47</span>
-                              <a href="./user/profile.html" class="author"
-                                 th:if="${session.loginUser ne null}"
-                                 th:href="@{/user/{userId}(userId=${session.loginUser.getUserId()})}"
-                                 th:text="${posts.writer}">
-                              </a>
-                              <span class="author"
-                                 th:if="${session.loginUser eq null}"
-                                 th:text="${posts.writer}">
-                              </span>
+<div class="background">
+    <nav class="navbar navbar-fixed-top header">
+        <div class="col-md-12">
+            <div class="navbar-header">
+                <a href="index.html" class="navbar-brand">
+                    <img src="/images/KakaoCI.png" />
+                </a>
 
-                          </div>
-                          <div class="reply" title="댓글">
-                              <i class="icon-reply"></i>
-                              <span class="point" th:text="${posts.id}"></span>
-                          </div>
-                      </div>
-                  </div>
-              </li>
-          </ul>
-          <div class="row">
-              <div class="col-md-3"></div>
-              <div class="col-md-6 text-center">
-                  <ul class="pagination center-block" style="display:inline-block;">
-                      <li><a href="#">«</a></li>
-                      <li><a href="#">1</a></li>
-                      <li><a href="#">2</a></li>
-                      <li><a href="#">3</a></li>
-                      <li><a href="#">4</a></li>
-                      <li><a href="#">5</a></li>
-                      <li><a href="#">»</a></li>
-                </ul>
-              </div>
-              <div class="col-md-3 qna-write">
-                  <a href="./qna/form.html" th:href="@{/qna/form}" class="btn btn-primary pull-right"
-                     th:if="${session.loginUser ne null}"
-                     role="button">질문하기</a>
-                  <a href="./qna/form.html" th:href="@{/user/login}" class="btn btn-primary pull-right"
-                     th:if="${session.loginUser eq null}"
-                     role="button">질문하기</a>
-              </div>
-          </div>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="/user/list.html">멤버 리스트</a></li>
+                <li><a class="black-component" href="/user/login.html" role="button">로그인</a></li>
+                <li><a class="black-component" href="/user/form.html" role="button">회원가입</a></li>
+            </ul>
         </div>
+    </nav>
+
+    <div class="description">
+        <div class="desc-container">
+            <p class="desc-small">안녕하세요</p>
+            <p class="desc-big">카카오 교육 페이지 입니다.</p>
+        </div>
+    </div>
+
+    <p class="total_num">전체 글 10명</p>
+
+    <div class="container" id="main">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="panel panel-default">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>제목</th> <th>작성자</th> <th>작성일자</th> <th>조회수</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><a href="/post/show.html">국내에서 Ruby on Rails와 Play가 활성화되기 힘든 이유는 뭘까?</a></td> <td>닉네임 1</td> <td>2021-12-14</td> <td>0</td>
+                    </tr>
+                    <tr>
+                        <td><a href="/post/show.html">runtime 에 reflect 발동 주체 객체가 뭔지 알 방법이 있을까요?</a></td> <td>닉네임 1</td> <td>2021-12-14</td> <td>0</td>
+                    </tr>
+                    <tr>
+                        <td><a href="/post/show.html">국내에서 Ruby on Rails와 Play가 활성화되기 힘든 이유는 뭘까?</a></td> <td>닉네임 1</td> <td>2021-12-14</td> <td>0</td>
+                    </tr>
+                    <tr>
+                        <td><a href="/post/show.html">국내에서 Ruby on Rails와 Play가 활성화되기 힘든 이유는 뭘까?</a></td> <td>닉네임 1</td> <td>2021-12-14</td> <td>0</td>
+                    </tr>
+                    <tr>
+                        <td><a href="/post/show.html">국내에서 Ruby on Rails와 Play가 활성화되기 힘든 이유는 뭘까?</a></td> <td>닉네임 1</td> <td>2021-12-14</td> <td>0</td>
+                    </tr>
+                    <tr>
+                        <td><a href="/post/show.html">국내에서 Ruby on Rails와 Play가 활성화되기 힘든 이유는 뭘까?</a></td> <td>닉네임 1</td> <td>2021-12-14</td> <td>0</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="post-btn-container">
+        <a class="post-write-btn" href="/post/form.html" role="button">글쓰기</a>
     </div>
 </div>
 
@@ -99,7 +104,7 @@
       <div class="modal-footer">
           <div class="col-md-12">
           <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-      </div>  
+      </div>
       </div>
   </div>
   </div>
@@ -141,16 +146,11 @@
       <div class="modal-footer">
           <div class="col-md-12">
           <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-      </div>  
+      </div>
       </div>
   </div>
   </div>
 </div>
 -->
-
-<!-- script references -->
-<script src="js/jquery-2.2.0.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/scripts.js"></script>
-	</body>
+</body>
 </html>
