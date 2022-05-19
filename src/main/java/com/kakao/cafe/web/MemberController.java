@@ -2,36 +2,27 @@ package com.kakao.cafe.web;
 
 import com.kakao.cafe.service.MemberService;
 import com.kakao.cafe.web.dto.member.MemberJoinRequestDto;
+import com.kakao.cafe.web.dto.member.MemberJoinResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@RequestMapping("/user")
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class MemberController {
 
 	private final MemberService memberService;
 
-	@GetMapping("/form")
-	public String form(Model model) {
-		log.debug("회원 가입 폼");
-		model.addAttribute("member", new MemberJoinRequestDto());
-		return "user/form";
-	}
-
-	@PostMapping("/form")
-	public String join(@RequestBody MemberJoinRequestDto dto) {
-		log.debug("dto = {}", dto);
-		//TODO: null일때 exception처리 필요
-		memberService.join(dto.toEntity());
-		log.debug("회원 가입 member.email = {}", dto.getEmail());
-		return "redirect:/";
+	@PostMapping("/member/join")
+	public ResponseEntity<MemberJoinResponseDto> join(@Validated @RequestBody MemberJoinRequestDto dto) {
+		log.debug("회원가입 진행 ");
+		MemberJoinResponseDto joinMember = memberService.join(dto.toEntity());
+		return new ResponseEntity<>(joinMember, HttpStatus.OK);
 	}
 }

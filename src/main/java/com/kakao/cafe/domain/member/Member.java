@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,7 +22,8 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Member extends BaseTimeEntity {
 
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "member_id")
 	private Long id;
 
@@ -31,13 +34,31 @@ public class Member extends BaseTimeEntity {
 	@Column(length = 100, nullable = false)
 	private String nickname;
 
+	@Column
+	private String picture;
+
+	@Enumerated(EnumType.STRING)
+	@Column()
+	private Role role;
+
 	@OneToMany(mappedBy = "member")
 	private List<Post> postList = new ArrayList<>();
 
 	@Builder
-	public Member(String email, String password, String nickname) {
+	public Member(String email, String password, String nickname, String picture, Role role) {
 		this.email = email;
 		this.password = password;
 		this.nickname = nickname;
+		this.picture = picture;
+		this.role = role;
+	}
+
+	public Member oauthUpdate(String name, String picture) {
+		this.nickname = name;
+		return this;
+	}
+
+	public String getRoleKey() {
+		return this.role.getKey();
 	}
 }

@@ -12,6 +12,14 @@ spring:
       hibernate:
         format_sql: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${client_id}
+            client-secret: ${client_secret}
+
 logging:
   level:
     org.hibernate.SQL: debug
