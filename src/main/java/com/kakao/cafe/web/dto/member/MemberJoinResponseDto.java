@@ -2,7 +2,9 @@ package com.kakao.cafe.web.dto.member;
 
 import com.kakao.cafe.domain.member.Member;
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 @Getter
 public class MemberJoinResponseDto {
 

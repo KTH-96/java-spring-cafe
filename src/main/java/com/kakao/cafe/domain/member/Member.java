@@ -22,7 +22,8 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Member extends BaseTimeEntity {
 
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "member_id")
 	private Long id;
 
@@ -37,28 +38,20 @@ public class Member extends BaseTimeEntity {
 	private String picture;
 
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
+	@Column()
 	private Role role;
 
 	@OneToMany(mappedBy = "member")
 	private List<Post> postList = new ArrayList<>();
 
 	@Builder
-	public Member(String email, String nickname, String picture, Role role) {
+	public Member(String email, String password, String nickname, String picture, Role role) {
 		this.email = email;
+		this.password = password;
 		this.nickname = nickname;
 		this.picture = picture;
 		this.role = role;
 	}
-
-	@Builder
-	public Member(String email, String password, String nickname) {
-		this.email = email;
-		this.password = password;
-		this.nickname = nickname;
-	}
-
-
 
 	public Member oauthUpdate(String name, String picture) {
 		this.nickname = name;
