@@ -1,0 +1,79 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a package using Gradle and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#Publishing-using-gradle
+
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ "BE-deploy" ]
+  pull_request:
+    branches: [ "BE-deploy" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./BE
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Insert data source information into application.yml & application-oauth.yml
+        run: |
+          sed -i "s|\${DATASOURCE_URL}|$DATASOURCE_URL|g" ./src/main/resources/application.yml
+          sed -i "s|\${DATASOURCE_USERNAME}|$DATASOURCE_USERNAME|g" ./src/main/resources/application.yml
+          sed -i "s|\${DATASOURCE_PASSWORD}|$DATASOURCE_PASSWORD|g" ./src/main/resources/application.yml
+          sed -i "s|\${CLIENT_ID}|$CLIENT_ID|g" ./src/main/resources/application-oauth.yml
+          sed -i "s|\${CLIENT_SECRET}|$CLIENT_SECRET|g" ./src/main/resources/application-oauth.yml
+          sed -i "s|\${IP}|$IP|g" ./src/main/resources/application.yml
+          sed -i "s|\${ISSUER}|$ISSUER|g" ./src/main/resources/application-oauth.yml
+          sed -i "s|\${SECRET_KEY}|$SECRET_KEY|g" ./src/main/resources/application-oauth.yml
+        env:
+          DATASOURCE_URL: ${{ secrets.DATASOURCE_URL }}
+          DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME }}
+          DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD }}
+          CLIENT_ID: ${{ secrets.DATASOURCE_PASSWORD }}
+          CLIENT_SECRET: ${{ secrets.DATASOURCE_PASSWORD }}
+          IP: ${{ secrets.DATASOURCE_PASSWORD }}
+          ISSUER: ${{ secrets.DATASOURCE_PASSWORD }}
+          SECRET_KEY: ${{ secrets.DATASOURCE_PASSWORD }}
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew bootJar
+
+      # 도커 빌드(도커 이미지 생성)
+      - name: Docker build
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:1.0 .
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:1.0
+          docker rmi ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:1.0
+
+        # 도커 이미지 배포 및 실행(EC2 ubuntu20.04로 배포)
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_HOST_DNS }} #(생성한 인스턴스의 DNS주소)
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }} #(인스턴스를 생성할 때 다운받은 pem키안에 값을 모두 복사해서 붙여넣기)
+          envs: GITHUB_SHA
+          script: |
+            sudo docker ps -a -q --filter "name=issuetracker" | grep -q . && docker stop ${{ secrets.DOCKER_REPO }} && docker rm ${{ secrets.DOCKER_REPO }} | true
+            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:1.0
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:1.0
+            sudo docker run -d -p 8080:8080 --name ${{ secrets.DOCKER_REPO }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:1.0
+            sudo docker rmi -f $(docker images -f "dangling=true" -q) || true          
